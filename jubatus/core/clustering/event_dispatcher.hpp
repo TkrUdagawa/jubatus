@@ -50,12 +50,13 @@ template <typename EventType, typename EventData>
 void event_dispatcher<EventType, EventData>::dispatch(
     const EventType& type,
     const EventData& data) {
-  if (events_.find(type) == events_.end()) {
+  typename std::map<EventType, std::vector<callback_t> >::iterator ev = events_.find(type);
+  if (ev == events_.end()) {
     return;
   }
   typedef typename std::vector<jubatus::util::lang::function<
     void(const EventData&)> > ::const_iterator iter;
-  for (iter it = events_[type].begin(); it != events_[type].end(); ++it) {
+  for (iter it = (*ev).second.begin(); it != (*ev).second.end(); ++it) {
     (*it)(data);
   }
 }
