@@ -30,20 +30,16 @@ template <typename EventType, typename EventData>
 class event_dispatcher {
   typedef jubatus::util::lang::function<void (const EventData&)> callback_t;
   typedef std::vector<callback_t> callbacks_t;
-  typedef typename std::map<EventType, callbacks_t>::const_iterator
-    callback_mapping;
-  typedef typename callbacks_t::const_iterator cb_iter; 
-  typedef typename std::vector<jubatus::util::lang::function<
-    void(const EventData&)> >::const_iterator iter;
-
- public:
+  typedef std::map<EventType, callbacks_t> EventTypeTable;
+ 
+public:
   virtual ~event_dispatcher() {}
 
   void add_event_listener(const EventType& type, callback_t callback);
 
  protected:
   void dispatch(const EventType& type, const EventData& data) const;
-  std::map<EventType, callbacks_t > events_;
+  std::map<EventType, callbacks_t> events_;
 };
 
 template <typename EventType, typename EventData>
@@ -57,11 +53,12 @@ template <typename EventType, typename EventData>
 void event_dispatcher<EventType, EventData>::dispatch(
     const EventType& type,
     const EventData& data) const {
-  callback_mapping ev = events_.find(type);
+  typename EventTypeTable::const_iterator ev = events_.find(type);
   if (ev == events_.end()) {
     return;
   }
-  for (iter it = ev->second.begin(); it != ev->second.end(); ++it) {
+  typename callbacks_t::const_iterator it;
+  for (it = ev->second.begin(); it != ev->second.end(); ++it) {
     (*it)(data);
   }
 }
