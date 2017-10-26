@@ -13,7 +13,7 @@ before_install:
 
 install:
   # dependency libraries
-  - sudo apt-get -qq install libmsgpack-dev liblog4cxx10-dev libopencv-dev libopencv-*-dev
+  - sudo apt-get -qq install libmsgpack-dev liblog4cxx10-dev libopencv-dev libopencv-*-dev valgrind
   # jubatus-mpio
   - git clone -b develop --depth 1 https://github.com/jubatus/jubatus-mpio.git
   - pushd jubatus-mpio && ./bootstrap && ./configure && make && sudo make install && popd
@@ -54,7 +54,7 @@ install:
 
 script:
   - ./waf configure --enable-zookeeper --enable-mecab --enable-ux --enable-opencv --enable-python-bridge
-  - ./waf build --checkall
+  - ./waf build --checkall --checkleak
 
 branches:
   only:
